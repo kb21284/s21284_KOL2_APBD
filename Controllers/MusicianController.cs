@@ -4,10 +4,10 @@ namespace s21284_KOL2_APBD.Controllers
 {
     public class MusicianController : Controller
     {
-        [HttpDelete]
-        public IActionResult Index(int idMusician)
+        //[HttpDelete]
+        /*public Task<IActionResult> RemoveMusician(int idMusician)
         {
             return View();
-        }
+        }*/
     }
 }
