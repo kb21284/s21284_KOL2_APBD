@@ -1,4 +1,4 @@
-namespace s21284_KOL2_APBD;
+﻿namespace s21284_KOL2_APBD;
 
 public class WeatherForecast
 {
