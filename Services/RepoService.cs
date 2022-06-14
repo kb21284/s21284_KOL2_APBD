@@ -22,5 +22,16 @@ namespace s21284_KOL2_APBD.Services
             return _repository.Album
                 .Include(e => e.Tracks);
         }
+
+        public IQueryable<Album> GetAlbumById(int idAlbum)
+        {
+            return _repository.Album.Where(e => e.IdAlbum == idAlbum)
+                .Include(e => e.Tracks);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _repository.SaveChangesAsync();
+        }
     }
 }

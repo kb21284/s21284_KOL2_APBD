@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using s21284_KOL2_APBD.Entities.Models;
 using s21284_KOL2_APBD.Services;
+using System.Transactions;
 
 namespace s21284_KOL2_APBD.Controllers
 {
@@ -18,45 +21,21 @@ namespace s21284_KOL2_APBD.Controllers
             }
 
             [HttpPost("{albumId}/album")]
-            public async Task<IActionResult> Create(int clientId, ZamowieniePost body)
+            public async Task<IActionResult> Create(int albumId)
             {
 
                 if (!ModelState.IsValid)
                     return BadRequest("Niepoprawne ciało żądania!");
 
-                if (await _service.GetClientById(clientId).FirstOrDefaultAsync() is null)
-                    return NotFound("Nie znaleziono klienta o podanym id");
-
-                if (await _service.GetEmployeeById(body.IdPracownik).FirstOrDefaultAsync() is null)
-                    return NotFound("Nie znaleziono pracownika o podanymn id");
+                if (await _service.GetAlbumById(albumId).FirstOrDefaultAsync() is null)
+                    return NotFound("Nie znaleziono albumu o podanym id");
 
                 using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     try
                     {
-                        var zamowienie = new Zamowienie
-                        {
-                            DataPrzyjecia = body.DataPrzyjecia,
-                            Uwagi = body.Uwagi,
-                            IdKlient = clientId,
-                            IdPracownik = body.IdPracownik
-                        };
-                        await _service.CreateAsync(zamowienie);
+                        
                         await _service.SaveChangesAsync();
-
-                        foreach (var wyrob in body.Wyroby)
-                        {
-                            if (await _service.GetConfectioneryById(wyrob.IdWyrobu).FirstOrDefaultAsync().ConfigureAwait(false) is null)
-                                return NotFound($"Nie znaleziono wyrobu -- ID: {wyrob.IdWyrobu}");
-
-                            await _service.CreateAsync(new ZamowienieWyrobCukierniczy
-                            {
-                                IdWyrobuCukierniczego = wyrob.IdWyrobu,
-                                IdZamowienia = zamowienie.IdZamowienia,
-                                Ilosc = wyrob.Ilosc,
-                                Uwagi = wyrob.Uwagi
-                            });
-                        }
 
                         scope.Complete();
 
