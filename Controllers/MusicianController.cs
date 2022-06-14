@@ -5,7 +5,7 @@ namespace s21284_KOL2_APBD.Controllers
     public class MusicianController : Controller
     {
         [HttpDelete]
-        public IActionResult Index()
+        public IActionResult Index(int idMusician)
         {
             return View();
         }
